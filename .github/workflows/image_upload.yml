@@ -1,0 +1,40 @@
+name: Generate Images from Prompts
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompts:
+        description: "Semicolon-separated prompts to generate images"
+        required: true
+        default: ""
+
+jobs:
+  generate_images:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python environment
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.8"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests pillow
+
+    - name: Run image generation script
+      env:
+        HG_TOKEN: ${{ secrets.HG_TOKEN }}
+        PROMPTS: ${{ github.event.inputs.prompts }}
+      run: |
+        python Images/image_upload.py
+
+    - name: Upload generated images as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-images
+        path: Images/*.png

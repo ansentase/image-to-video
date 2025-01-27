@@ -22,6 +22,8 @@ jobs:
         pip install requests pillow
 
     - name: Run image generation script
+      env:
+        HG_TOKEN: ${{ secrets.HG_TOKEN }}
       run: |
         python Images/generate_image.py
 
@@ -30,4 +32,3 @@ jobs:
       with:
         name: generated-image
         path: Images/generated_image_16x9.png
-        
